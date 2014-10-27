@@ -22,7 +22,6 @@ const WorkspaceIsolator = new Lang.Class({
 			}
 			return this.open_new_window(-1);
 		};
-		AppSystem.emit('installed-changed');
 		this._onRestackedId = global.screen.connect('restacked', function() {
 			AppSystem.emit('installed-changed');
 		});
