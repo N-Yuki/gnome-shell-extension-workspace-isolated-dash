@@ -3,7 +3,7 @@ PROJECT = workspace-dash
 UUID = `grep -oP '(?<="uuid": ")[^"]*' $(PROJECT)/metadata.json`
 
 SCHEMAC = glib-compile-schemas
-ZIP = zip -ro
+ZIP = zip -roj
 CP = rsync -aP
 
 $(PROJECT).zip: compile
