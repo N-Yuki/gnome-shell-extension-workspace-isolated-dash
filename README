@@ -1,1 +1,5 @@
 Isolate workspaces in Gnome Shell.
+
+Original idea from: https://extensions.gnome.org/extension/876/isolated-workspaces/ and https://extensions.gnome.org/extension/440/workspace-separation-on-dash/
+
+The previous approaches reimplemented many parts, causing incompatibilities and large codebases. This implementation is significantly smaller and easier to maintain as it does not reimplement half the Dash to achieve the same features.
