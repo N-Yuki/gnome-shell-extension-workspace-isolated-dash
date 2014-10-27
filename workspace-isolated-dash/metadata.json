@@ -1,9 +1,9 @@
 {
-	"uuid": "workspace-dash@n-yuki",
-	"name": "Workspace Dash",
+	"uuid": "workspace-isolated-dash@n-yuki",
+	"name": "Workspace Isolated Dash",
 	"description": "Isolate workspaces\nOriginal idea from: https://extensions.gnome.org/extension/876/isolated-workspaces/ and https://extensions.gnome.org/extension/440/workspace-separation-on-dash/\nThe previous approaches reimplemented many parts, causing incompatibilities and large codebases. This implementation is significantly smaller and easier to maintain as it does not reimplement half the Dash to achieve the same features.",
 	"shell-version": [ "3.10", "3.12", "3.14" ],
-	"settings-schema": "org.gnome.shell.extensions.workspace-dash",
-	"url": "https://github.com/N-Yuki/gnome-shell-extension-workspace-dash",
+	"settings-schema": "org.gnome.shell.extensions.workspace-isolated-dash",
+	"url": "https://github.com/N-Yuki/gnome-shell-extension-workspace-isolated-dash",
 	"version": 1
 }

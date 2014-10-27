@@ -1,4 +1,4 @@
-PROJECT = workspace-dash
+PROJECT = workspace-isolated-dash
 
 UUID = `grep -oP '(?<="uuid": ")[^"]*' $(PROJECT)/metadata.json`
 
