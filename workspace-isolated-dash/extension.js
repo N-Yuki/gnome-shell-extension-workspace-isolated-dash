@@ -24,7 +24,7 @@ const WorkspaceIsolator = new Lang.Class({
 			return this.open_new_window(-1);
 		};
 		this._onRestackedId = global.screen.connect('restacked', function() {
-			AppSystem.emit('app-state-changed');
+			AppSystem.emit('installed-changed');
 		});
 	},
 
@@ -33,7 +33,7 @@ const WorkspaceIsolator = new Lang.Class({
 		delete AppSystem.get_running_wi_nyuki;
 		Shell.App.prototype.activate = Shell.App.prototype.activate_wi_nyuki;
 		delete Shell.App.prototype.activate_wi_nyuki;
-		AppSystem.emit('app-state-changed');
+		AppSystem.emit('installed-changed');
 		global.screen.disconnect(this._onRestackedId);
 	},
 
