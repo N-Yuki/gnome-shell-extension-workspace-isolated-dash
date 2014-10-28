@@ -9,16 +9,15 @@ const WorkspaceIsolator = new Lang.Class({
 	Name: 'WorkspaceIsolator',
 
 	_init: function() {
-		AppSystem.get_running_wid_nyuki = AppSystem.get_running;
-		AppSystem.get_running = Lang.bind(this, function() {
-			let running = AppSystem.get_running_wid_nyuki();
-			return running.filter(this._isCurrentApp, this);
-		});
-		Shell.App.prototype.activate_wid_nyuki = Shell.App.prototype.activate;
+		AppSystem._workspace_isolated_dash_nyuki_get_running = AppSystem.get_running;
+		AppSystem.get_running = function() {
+			let running = AppSystem._workspace_isolated_dash_nyuki_get_running();
+			return running.filter(WorkspaceIsolator.isCurrentApp);
+		};
+		Shell.App.prototype._workspace_isolated_dash_nyuki_activate = Shell.App.prototype.activate;
 		Shell.App.prototype.activate = function() {
-			let activeWorkspace = global.screen.get_active_workspace();
-			if (this.is_on_workspace(activeWorkspace)) {
-				return this.activate_wid_nyuki();
+			if (WorkspaceIsolator.isCurrentApp(this)) {
+				return this._workspace_isolated_dash_nyuki_activate();
 			}
 			return this.open_new_window(-1);
 		};
@@ -31,19 +30,21 @@ const WorkspaceIsolator = new Lang.Class({
 	},
 
 	destroy: function() {
-		AppSystem.get_running = AppSystem.get_running_wid_nyuki;
-		delete AppSystem.get_running_wid_nyuki;
-		Shell.App.prototype.activate = Shell.App.prototype.activate_wid_nyuki;
-		delete Shell.App.prototype.activate_wid_nyuki;
+		AppSystem.get_running = AppSystem._workspace_isolated_dash_nyuki_get_running;
+		delete AppSystem._workspace_isolated_dash_nyuki_get_running;
+		Shell.App.prototype.activate = Shell.App.prototype._workspace_isolated_dash_nyuki_activate;
+		delete Shell.App.prototype._workspace_isolated_dash_nyuki_activate;
+		if (this._onRestackedId) {
+			global.screen.disconnect(this._onRestackedId);
+			this._onRestackedId = 0;
+		}
 		AppSystem.emit('installed-changed');
-		global.screen.disconnect(this._onRestackedId);
-	},
-
-	_isCurrentApp: function(app) {
-		let activeWorkspace = global.screen.get_active_workspace();
-		return app.is_on_workspace(activeWorkspace);
 	}
 });
+WorkspaceIsolator.isCurrentApp = function(app) {
+	let activeWorkspace = global.screen.get_active_workspace();
+	return app.is_on_workspace(activeWorkspace);
+}
 
 function init(meta) {
 	/* do nothing */
