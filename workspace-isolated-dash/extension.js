@@ -2,9 +2,6 @@ const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 
 const Shell = imports.gi.Shell;
-const Meta = imports.gi.Meta;
-
-const Workspace = imports.ui.workspace;
 
 const AppSystem = Shell.AppSystem.get_default();
 
