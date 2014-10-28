@@ -1,6 +1,8 @@
-const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
 const Lang = imports.lang;
+const Mainloop = imports.mainloop;
+
+const Shell = imports.gi.Shell;
+const Meta = imports.gi.Meta;
 
 const Workspace = imports.ui.workspace;
 
@@ -25,6 +27,9 @@ const WorkspaceIsolator = new Lang.Class({
 		};
 		this._onRestackedId = global.screen.connect('restacked', function() {
 			AppSystem.emit('installed-changed');
+			Mainloop.timeout_add(150, function() {
+				AppSystem.emit('installed-changed');
+			});
 		});
 	},
 
