@@ -1,7 +1,8 @@
-const Workspace = imports.ui.workspace;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const Lang = imports.lang;
+
+const Workspace = imports.ui.workspace;
 
 const AppSystem = Shell.AppSystem.get_default();
 
@@ -23,7 +24,7 @@ const WorkspaceIsolator = new Lang.Class({
 			return this.open_new_window(-1);
 		};
 		this._onRestackedId = global.screen.connect('restacked', function() {
-			AppSystem.emit('installed-changed');
+			AppSystem.emit('app-state-changed');
 		});
 	},
 
@@ -32,7 +33,7 @@ const WorkspaceIsolator = new Lang.Class({
 		delete AppSystem.get_running_main;
 		Shell.App.prototype.activate = Shell.App.prototype.activate_main;
 		delete Shell.App.prototype.activate_main;
-		AppSystem.emit('installed-changed');
+		AppSystem.emit('app-state-changed');
 		global.screen.disconnect(this._onRestackedId);
 	},
 
