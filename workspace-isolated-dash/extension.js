@@ -27,6 +27,7 @@ const WorkspaceIsolator = new Lang.Class({
 				AppSystem.emit('installed-changed');
 			});
 		});
+		AppSystem.emit('installed-changed');
 	},
 
 	destroy: function() {
