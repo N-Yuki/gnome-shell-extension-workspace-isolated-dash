@@ -31,10 +31,14 @@ const WorkspaceIsolator = new Lang.Class({
 	},
 
 	destroy: function() {
-		AppSystem.get_running = AppSystem._workspace_isolated_dash_nyuki_get_running;
-		delete AppSystem._workspace_isolated_dash_nyuki_get_running;
-		Shell.App.prototype.activate = Shell.App.prototype._workspace_isolated_dash_nyuki_activate;
-		delete Shell.App.prototype._workspace_isolated_dash_nyuki_activate;
+		if (AppSystem._workspace_isolated_dash_nyuki_get_running) {
+			AppSystem.get_running = AppSystem._workspace_isolated_dash_nyuki_get_running;
+			delete AppSystem._workspace_isolated_dash_nyuki_get_running;
+		}
+		if (Shell.App.prototype._workspace_isolated_dash_nyuki_activate) {
+			Shell.App.prototype.activate = Shell.App.prototype._workspace_isolated_dash_nyuki_activate;
+			delete Shell.App.prototype._workspace_isolated_dash_nyuki_activate;
+		}
 		if (this._onRestackedId) {
 			global.screen.disconnect(this._onRestackedId);
 			this._onRestackedId = 0;
