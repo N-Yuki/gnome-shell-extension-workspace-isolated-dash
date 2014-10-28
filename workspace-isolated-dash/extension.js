@@ -10,16 +10,16 @@ const WorkspaceIsolator = new Lang.Class({
 	Name: 'WorkspaceIsolator',
 
 	_init: function() {
-		AppSystem.get_running_main = AppSystem.get_running;
+		AppSystem.get_running_wi_nyuki = AppSystem.get_running;
 		AppSystem.get_running = Lang.bind(this, function() {
-			let running = AppSystem.get_running_main();
+			let running = AppSystem.get_running_wi_nyuki();
 			return running.filter(this._isCurrentApp, this);
 		});
-		Shell.App.prototype.activate_main = Shell.App.prototype.activate;
+		Shell.App.prototype.activate_wi_nyuki = Shell.App.prototype.activate;
 		Shell.App.prototype.activate = function() {
 			let activeWorkspace = global.screen.get_active_workspace();
 			if (this.is_on_workspace(activeWorkspace)) {
-				return this.activate_main();
+				return this.activate_wi_nyuki();
 			}
 			return this.open_new_window(-1);
 		};
@@ -29,10 +29,10 @@ const WorkspaceIsolator = new Lang.Class({
 	},
 
 	destroy: function() {
-		AppSystem.get_running = AppSystem.get_running_main;
-		delete AppSystem.get_running_main;
-		Shell.App.prototype.activate = Shell.App.prototype.activate_main;
-		delete Shell.App.prototype.activate_main;
+		AppSystem.get_running = AppSystem.get_running_wi_nyuki;
+		delete AppSystem.get_running_wi_nyuki;
+		Shell.App.prototype.activate = Shell.App.prototype.activate_wi_nyuki;
+		delete Shell.App.prototype.activate_wi_nyuki;
 		AppSystem.emit('app-state-changed');
 		global.screen.disconnect(this._onRestackedId);
 	},
