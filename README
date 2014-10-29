@@ -1,4 +1,4 @@
-Isolate workspaces in Gnome Shell.
+Isolate workspaces in Gnome Shell, so the Dash does not show application icons of apps not on the current workspace, unless they are favourited.\nAdditionally, activating an application will open a new window if no existing windows are on the current workspace.
 
 Original idea from: https://extensions.gnome.org/extension/876/isolated-workspaces/ and https://extensions.gnome.org/extension/440/workspace-separation-on-dash/
 
