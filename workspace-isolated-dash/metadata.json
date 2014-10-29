@@ -4,6 +4,5 @@
 	"description": "Isolate workspaces, so the Dash does not show application icons of apps not on the current workspace, unless they are favourited.\nAdditionally, activating an application will open a new window if no existing windows are on the current workspace.",
 	"shell-version": [ "3.10", "3.12", "3.14" ],
 	"settings-schema": "org.gnome.shell.extensions.workspace-isolated-dash",
-	"url": "https://github.com/N-Yuki/gnome-shell-extension-workspace-isolated-dash",
-	"version": 2
+	"url": "https://github.com/N-Yuki/gnome-shell-extension-workspace-isolated-dash"
 }
