@@ -3,6 +3,7 @@ const Mainloop = imports.mainloop;
 
 const Shell = imports.gi.Shell;
 
+const Main = imports.ui.main;
 const AppIcon = imports.ui.appDisplay.AppIcon;
 
 const AppSystem = Shell.AppSystem.get_default();
@@ -44,7 +45,8 @@ const WorkspaceIsolator = new Lang.Class({
 			// Add workaround for race condition
 			Mainloop.timeout_add(150, WorkspaceIsolator.refresh);
 		});
-		// Refresh
+		// Set up
+		WorkspaceIsolator.clearIcons();
 		WorkspaceIsolator.refresh();
 	},
 
@@ -69,7 +71,8 @@ const WorkspaceIsolator = new Lang.Class({
 			global.screen.disconnect(this._onRestackedId);
 			this._onRestackedId = 0;
 		}
-		// Refresh
+		// Clean up
+		WorkspaceIsolator.clearIcons();
 		WorkspaceIsolator.refresh();
 	}
 });
@@ -91,6 +94,13 @@ WorkspaceIsolator.refresh = function() {
 	}
 	running.forEach(function(app) {
 		app.notify('state');
+	});
+}
+// Clear icon cache
+WorkspaceIsolator.clearIcons = function() {
+	Main.overview._dash._box.destroy_all_children();
+	Main.overview.viewSelector.appDisplay._views.forEach(function(wrapper) {
+		wrapper.view._redisplay();
 	});
 }
 
