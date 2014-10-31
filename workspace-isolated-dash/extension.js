@@ -3,6 +3,8 @@ const Mainloop = imports.mainloop;
 
 const Shell = imports.gi.Shell;
 
+const AppIcon = imports.ui.appDisplay.AppIcon;
+
 const AppSystem = Shell.AppSystem.get_default();
 
 const WorkspaceIsolator = new Lang.Class({
@@ -23,20 +25,27 @@ const WorkspaceIsolator = new Lang.Class({
 			}
 			return this.open_new_window(-1);
 		};
+		// Extend AppIcon's _onStateChanged to remove 'running' style for applications not on the active workspace
+		AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged = AppIcon.prototype._onStateChanged;
+		AppIcon.prototype._onStateChanged = function() {
+			if (WorkspaceIsolator.isCurrentApp(this.app)) {
+				this._workspace_isolated_dash_nyuki__onStateChanged();
+			} else {
+				this.actor.remove_style_class_name('running');
+			}
+		};
 		// Refresh the dash whenever there is a restack, including:
 		// - workspace change
 		// - move window to another workspace
 		// - window created
 		// - window closed
 		this._onRestackedId = global.screen.connect('restacked', function() {
-			AppSystem.emit('installed-changed');
-			// Add workaround to race condition
-			Mainloop.timeout_add(150, function() {
-				AppSystem.emit('installed-changed');
-			});
+			WorkspaceIsolator.refresh();
+			// Add workaround for race condition
+			Mainloop.timeout_add(150, WorkspaceIsolator.refresh);
 		});
 		// Refresh
-		AppSystem.emit('installed-changed');
+		WorkspaceIsolator.refresh();
 	},
 
 	destroy: function() {
@@ -50,19 +59,39 @@ const WorkspaceIsolator = new Lang.Class({
 			Shell.App.prototype.activate = Shell.App.prototype._workspace_isolated_dash_nyuki_activate;
 			delete Shell.App.prototype._workspace_isolated_dash_nyuki_activate;
 		}
+		// Revert the AppIcon function
+		if (AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged) {
+			AppIcon.prototype._onStateChanged = AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged;
+			delete AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged;
+		}
 		// Disconnect the restack signal
 		if (this._onRestackedId) {
 			global.screen.disconnect(this._onRestackedId);
 			this._onRestackedId = 0;
 		}
 		// Refresh
-		AppSystem.emit('installed-changed');
+		WorkspaceIsolator.refresh();
 	}
 });
 // Check if an application is on the active workspace
 WorkspaceIsolator.isCurrentApp = function(app) {
 	let activeWorkspace = global.screen.get_active_workspace();
 	return app.is_on_workspace(activeWorkspace);
+}
+// Refresh dash
+WorkspaceIsolator.refresh = function() {
+	// Update applications shown in the dash
+	AppSystem.emit('installed-changed');
+	// Update icon state of all running applications
+	let running;
+	if (AppSystem._workspace_isolated_dash_nyuki_get_running) {
+		running = AppSystem._workspace_isolated_dash_nyuki_get_running();
+	} else {
+		running = AppSystem.get_running();
+	}
+	running.forEach(function(app) {
+		app.notify('state');
+	});
 }
 
 function init(meta) {
