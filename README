@@ -3,4 +3,4 @@ Additionally, activating an application will open a new window if no existing wi
 
 Original idea from: https://extensions.gnome.org/extension/876/isolated-workspaces/ and https://extensions.gnome.org/extension/440/workspace-separation-on-dash/
 
-The previous approaches reimplemented many parts, causing incompatibilities and large codebases. This implementation is significantly smaller and easier to maintain as it does not reimplement half the Dash to achieve the same features.
+The previous approaches reimplemented many parts, causing incompatibilities and large codebases. This implementation is significantly smaller and easier to maintain as it does not reimplement half the Dash to achieve the same features. It also fixes a number of bugs, as well as adding new features. For example, application icons are also updated.
