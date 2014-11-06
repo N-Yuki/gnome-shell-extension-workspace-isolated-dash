@@ -26,15 +26,26 @@ const WorkspaceIsolator = new Lang.Class({
 			}
 			return this.open_new_window(-1);
 		};
-		// Extend AppIcon's _onStateChanged to remove 'running' style for applications not on the active workspace
-		AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged = AppIcon.prototype._onStateChanged;
-		AppIcon.prototype._onStateChanged = function() {
-			if (WorkspaceIsolator.isCurrentApp(this.app)) {
-				this._workspace_isolated_dash_nyuki__onStateChanged();
-			} else {
-				this.actor.remove_style_class_name('running');
-			}
-		};
+		// Extend AppIcon's state change to remove 'running' style for applications not on the active workspace
+		if (AppIcon.prototype._onStateChanged) {
+			AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged = AppIcon.prototype._onStateChanged;
+			AppIcon.prototype._onStateChanged = function() {
+				if (WorkspaceIsolator.isCurrentApp(this.app)) {
+					this._workspace_isolated_dash_nyuki__onStateChanged();
+				} else {
+					this.actor.remove_style_class_name('running');
+				}
+			};
+		} else if (AppIcon.prototype._updateRunningStyle) {
+			AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle = AppIcon.prototype._updateRunningStyle;
+			AppIcon.prototype._updateRunningStyle = function() {
+				if (WorkspaceIsolator.isCurrentApp(this.app)) {
+					this._workspace_isolated_dash_nyuki__updateRunningStyle();
+				} else {
+					this.actor.remove_style_class_name('running');
+				}
+			};
+		}
 		// Refresh the dash whenever there is a restack, including:
 		// - workspace change
 		// - move window to another workspace
@@ -46,7 +57,7 @@ const WorkspaceIsolator = new Lang.Class({
 			Mainloop.timeout_add(150, WorkspaceIsolator.refresh);
 		});
 		// Set up
-		WorkspaceIsolator.clearIcons();
+		if (AppIcon.prototype._onStateChanged) WorkspaceIsolator.clearIcons();
 		WorkspaceIsolator.refresh();
 	},
 
@@ -65,6 +76,9 @@ const WorkspaceIsolator = new Lang.Class({
 		if (AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged) {
 			AppIcon.prototype._onStateChanged = AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged;
 			delete AppIcon.prototype._workspace_isolated_dash_nyuki__onStateChanged;
+		} else if (AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle) {
+			AppIcon.prototype._updateRunningStyle = AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle;
+			delete AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle;
 		}
 		// Disconnect the restack signal
 		if (this._onRestackedId) {
@@ -72,7 +86,7 @@ const WorkspaceIsolator = new Lang.Class({
 			this._onRestackedId = 0;
 		}
 		// Clean up
-		WorkspaceIsolator.clearIcons();
+		if (AppIcon.prototype._onStateChanged) WorkspaceIsolator.clearIcons();
 		WorkspaceIsolator.refresh();
 	}
 });
