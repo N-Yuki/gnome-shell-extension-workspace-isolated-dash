@@ -94,7 +94,7 @@ const WorkspaceIsolator = new Lang.Class({
 WorkspaceIsolator.isCurrentApp = function(app) {
 	let activeWorkspace = global.screen.get_active_workspace();
 	return app.is_on_workspace(activeWorkspace);
-}
+};
 // Refresh dash
 WorkspaceIsolator.refresh = function() {
 	// Update applications shown in the dash
@@ -109,14 +109,14 @@ WorkspaceIsolator.refresh = function() {
 	running.forEach(function(app) {
 		app.notify('state');
 	});
-}
+};
 // Clear icon cache
 WorkspaceIsolator.clearIcons = function() {
 	Main.overview._dash._box.destroy_all_children();
 	Main.overview.viewSelector.appDisplay._views.forEach(function(wrapper) {
 		wrapper.view._redisplay();
 	});
-}
+};
 
 function init(meta) {
 	/* do nothing */
