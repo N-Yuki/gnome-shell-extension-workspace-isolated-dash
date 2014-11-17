@@ -16,7 +16,11 @@ const WorkspaceIsolator = new Lang.Class({
 		AppSystem._workspace_isolated_dash_nyuki_get_running = AppSystem.get_running;
 		AppSystem.get_running = function() {
 			let running = AppSystem._workspace_isolated_dash_nyuki_get_running();
-			return running.filter(WorkspaceIsolator.isCurrentApp);
+			if (Main.overview.visible) {
+				return running.filter(WorkspaceIsolator.isCurrentApp);
+			} else {
+				return running;
+			}
 		};
 		// Extend App's activate to open a new window if no windows exist on the active workspace
 		Shell.App.prototype._workspace_isolated_dash_nyuki_activate = Shell.App.prototype.activate;
@@ -46,7 +50,11 @@ const WorkspaceIsolator = new Lang.Class({
 				}
 			};
 		}
-		// Refresh the dash whenever there is a restack, including:
+		// Refresh whenever the overview is showing
+		this._onShowingId = Main.overview.connect('showing', function() {
+			WorkspaceIsolator.refresh();
+		});
+		// Refresh whenever there is a restack, including:
 		// - workspace change
 		// - move window to another workspace
 		// - window created
@@ -79,6 +87,11 @@ const WorkspaceIsolator = new Lang.Class({
 		} else if (AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle) {
 			AppIcon.prototype._updateRunningStyle = AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle;
 			delete AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle;
+		}
+		// Disconnect the showing signal
+		if (this._onShowingId) {
+			Main.overview.disconnect(this._onShowingId);
+			this._onShowingId = 0;
 		}
 		// Disconnect the restack signal
 		if (this._onRestackedId) {
