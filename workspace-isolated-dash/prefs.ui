@@ -49,9 +49,4 @@
       </packing>
     </child>
   </object>
-  <object class="GtkAdjustment" id="scrolldelayspinadjustment">
-    <property name="upper">500</property>
-    <property name="step_increment">10</property>
-    <property name="page_increment">50</property>
-  </object>
 </interface>
