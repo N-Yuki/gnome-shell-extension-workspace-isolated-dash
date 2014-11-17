@@ -6,6 +6,10 @@ const Shell = imports.gi.Shell;
 const Main = imports.ui.main;
 const AppIcon = imports.ui.appDisplay.AppIcon;
 
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const Prefs = Me.imports.prefs;
+
 const AppSystem = Shell.AppSystem.get_default();
 
 const WorkspaceIsolator = new Lang.Class({
@@ -16,7 +20,7 @@ const WorkspaceIsolator = new Lang.Class({
 		AppSystem._workspace_isolated_dash_nyuki_get_running = AppSystem.get_running;
 		AppSystem.get_running = function() {
 			let running = AppSystem._workspace_isolated_dash_nyuki_get_running();
-			if (Main.overview.visible) {
+			if (Main.overview.visible || Prefs.settings.get_boolean('complete-app-isolation')) {
 				return running.filter(WorkspaceIsolator.isCurrentApp);
 			} else {
 				return running;

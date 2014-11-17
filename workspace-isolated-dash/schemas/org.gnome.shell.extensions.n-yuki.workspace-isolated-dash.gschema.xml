@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+	<schema id="org.gnome.shell.extensions.n-yuki.workspace-isolated-dash" path="/org/gnome/shell/extensions/n-yuki/workspace-isolated-dash/">
+		<key type="b" name="complete-app-isolation">
+			<default>false</default>
+			<summary>Full running apps isolation</summary>
+			<description>Isolate running apps list outside the overview as well (i.e. alt-tab app switcher)</description>
+		</key>
+	</schema>
+</schemalist>

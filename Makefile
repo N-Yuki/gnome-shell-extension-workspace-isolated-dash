@@ -1,5 +1,10 @@
 PROJECT = workspace-isolated-dash
 
+SCHEMAS_PATH = $(PROJECT)/schemas
+SCHEMA = org.gnome.shell.extensions.n-yuki.$(PROJECT).gschema.xml
+SCHEMA_SRC = $(SCHEMAS_PATH)/$(SCHEMA)
+SCHEMA_BIN = $(SCHEMAS_PATH)/gschemas.compiled
+
 UUID = `grep -oP '(?<="uuid": ")[^"]*' $(PROJECT)/metadata.json`
 
 SCHEMAC = glib-compile-schemas
@@ -12,10 +17,13 @@ $(PROJECT).zip: compile
 install: compile
 	$(CP) $(PROJECT)/ "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
 
-compile: clean-backups
+compile: clean-backups $(SCHEMA_BIN)
+
+$(SCHEMA_BIN): $(SCHEMA_SRC)
+	$(SCHEMAC) $(SCHEMAS_PATH)
 
 clean-backups:
 	find . -type f -name '*~' -delete
 
 clean: clean-backups
-	rm -f $(PROJECT).zip
+	rm -f $(PROJECT).zip $(SCHEMA_BIN)
