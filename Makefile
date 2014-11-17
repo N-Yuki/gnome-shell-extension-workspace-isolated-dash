@@ -8,11 +8,11 @@ SCHEMA_BIN = $(SCHEMAS_PATH)/gschemas.compiled
 UUID = `grep -oP '(?<="uuid": ")[^"]*' $(PROJECT)/metadata.json`
 
 SCHEMAC = glib-compile-schemas
-ZIP = zip -roj
+ZIP = zip -ro
 CP = rsync -aP
 
 $(PROJECT).zip: compile
-	$(ZIP) $@ $(PROJECT)
+	cd $(PROJECT) && $(ZIP) ../$@ .
 
 install: compile
 	$(CP) $(PROJECT)/ "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
