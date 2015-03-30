@@ -34,17 +34,13 @@ const WorkspaceIsolator = new Lang.Class({
 			}
 			return this.open_new_window(-1);
 		};
-		// Extend AppIcon's state change to remove 'running' style for applications not on the active workspace
+		// Extend AppIcon's state change to hide 'running' indicator for applications not on the active workspace
 		AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle = AppIcon.prototype._updateRunningStyle;
 		AppIcon.prototype._updateRunningStyle = function() {
 			if (WorkspaceIsolator.isCurrentApp(this.app)) {
 				this._workspace_isolated_dash_nyuki__updateRunningStyle();
 			} else {
-				if (this._dot) { // GNOME Shell 3.16+
-					this._dot.hide();
-				} else {
-					this.actor.remove_style_class_name('running');
-				}
+				this._dot.hide();
 			}
 		};
 		// Refresh whenever the overview is showing
@@ -61,8 +57,6 @@ const WorkspaceIsolator = new Lang.Class({
 			// Add workaround for race condition
 			Mainloop.timeout_add(150, WorkspaceIsolator.refresh);
 		});
-		// Set up
-		WorkspaceIsolator.refresh();
 	},
 
 	destroy: function() {
@@ -91,8 +85,6 @@ const WorkspaceIsolator = new Lang.Class({
 			global.screen.disconnect(this._onRestackedId);
 			this._onRestackedId = 0;
 		}
-		// Clean up
-		WorkspaceIsolator.refresh();
 	}
 });
 // Check if an application is on the active workspace
@@ -116,16 +108,18 @@ WorkspaceIsolator.refresh = function() {
 	});
 };
 
-function init(meta) {
-	/* do nothing */
-}
-
 let _wsIsolator;
 
 function enable() {
 	_wsIsolator = new WorkspaceIsolator();
+	WorkspaceIsolator.refresh();
 }
 
 function disable() {
 	_wsIsolator.destroy();
+	WorkspaceIsolator.refresh();
+}
+
+function init(meta) {
+	/* do nothing */
 }
