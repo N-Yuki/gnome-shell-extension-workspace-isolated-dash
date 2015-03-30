@@ -40,7 +40,11 @@ const WorkspaceIsolator = new Lang.Class({
 			if (WorkspaceIsolator.isCurrentApp(this.app)) {
 				this._workspace_isolated_dash_nyuki__updateRunningStyle();
 			} else {
-				this.actor.remove_style_class_name('running');
+				if (this._dot) { // GNOME Shell 3.16+
+					this._dot.hide();
+				} else {
+					this.actor.remove_style_class_name('running');
+				}
 			}
 		};
 		// Refresh whenever the overview is showing
