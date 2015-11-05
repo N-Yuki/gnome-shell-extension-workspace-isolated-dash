@@ -19,6 +19,7 @@ const WorkspaceIsolator = new Lang.Class({
 		// Extend AppSystem to only return applications running on the active workspace
 		AppSystem._workspace_isolated_dash_nyuki_get_running = AppSystem.get_running;
 		AppSystem.get_running = function() {
+			global.log('AppSystem.get_running()');
 			let running = AppSystem._workspace_isolated_dash_nyuki_get_running();
 			if (Main.overview.visible || Prefs.settings.get_boolean('complete-app-isolation')) {
 				return running.filter(WorkspaceIsolator.isCurrentApp);
@@ -29,6 +30,7 @@ const WorkspaceIsolator = new Lang.Class({
 		// Extend App's activate to open a new window if no windows exist on the active workspace
 		Shell.App.prototype._workspace_isolated_dash_nyuki_activate = Shell.App.prototype.activate;
 		Shell.App.prototype.activate = function() {
+			global.log('Shell.App.activate()');
 			if (WorkspaceIsolator.isCurrentApp(this)) {
 				return this._workspace_isolated_dash_nyuki_activate();
 			}
@@ -37,6 +39,7 @@ const WorkspaceIsolator = new Lang.Class({
 		// Extend AppIcon's state change to hide 'running' indicator for applications not on the active workspace
 		AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle = AppIcon.prototype._updateRunningStyle;
 		AppIcon.prototype._updateRunningStyle = function() {
+			global.log('AppIcon._updateRunningStyle()');
 			if (WorkspaceIsolator.isCurrentApp(this.app)) {
 				this._workspace_isolated_dash_nyuki__updateRunningStyle();
 			} else {
@@ -89,11 +92,13 @@ const WorkspaceIsolator = new Lang.Class({
 });
 // Check if an application is on the active workspace
 WorkspaceIsolator.isCurrentApp = function(app) {
+	global.log('WorkspaceIsolator.isCurrentApp()');
 	let activeWorkspace = global.screen.get_active_workspace();
 	return app.is_on_workspace(activeWorkspace);
 };
 // Refresh dash
 WorkspaceIsolator.refresh = function() {
+	global.log('WorkspaceIsolator.refresh()');
 	// Update applications shown in the dash
 	AppSystem.emit('installed-changed');
 	// Update icon state of all running applications
