@@ -21,7 +21,7 @@ const WorkspaceIsolator = new Lang.Class({
 		AppSystem.get_running = function() {
 			let running = AppSystem._workspace_isolated_dash_nyuki_get_running();
 			if (Main.overview.visible || Prefs.settings.get_boolean('complete-app-isolation')) {
-				return running.filter(WorkspaceIsolator.isCurrentApp);
+				return running.filter(WorkspaceIsolator.isActiveApp);
 			} else {
 				return running;
 			}
@@ -29,7 +29,7 @@ const WorkspaceIsolator = new Lang.Class({
 		// Extend App's activate to open a new window if no windows exist on the active workspace
 		Shell.App.prototype._workspace_isolated_dash_nyuki_activate = Shell.App.prototype.activate;
 		Shell.App.prototype.activate = function() {
-			if (WorkspaceIsolator.isCurrentApp(this)) {
+			if (WorkspaceIsolator.isActiveApp(this)) {
 				return this._workspace_isolated_dash_nyuki_activate();
 			}
 			return this.open_new_window(-1);
@@ -37,7 +37,7 @@ const WorkspaceIsolator = new Lang.Class({
 		// Extend AppIcon's state change to hide 'running' indicator for applications not on the active workspace
 		AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle = AppIcon.prototype._updateRunningStyle;
 		AppIcon.prototype._updateRunningStyle = function() {
-			if (WorkspaceIsolator.isCurrentApp(this.app)) {
+			if (WorkspaceIsolator.isActiveApp(this.app)) {
 				this._workspace_isolated_dash_nyuki__updateRunningStyle();
 			} else {
 				this._dot.hide();
@@ -54,8 +54,6 @@ const WorkspaceIsolator = new Lang.Class({
 		// - window closed
 		this._onRestackedId = global.screen.connect('restacked', function() {
 			WorkspaceIsolator.refresh();
-			// Add workaround for race condition
-			Mainloop.timeout_add(150, WorkspaceIsolator.refresh);
 		});
 	},
 
@@ -88,14 +86,12 @@ const WorkspaceIsolator = new Lang.Class({
 	}
 });
 // Check if an application is on the active workspace
-WorkspaceIsolator.isCurrentApp = function(app) {
+WorkspaceIsolator.isActiveApp = function(app) {
 	let activeWorkspace = global.screen.get_active_workspace();
 	return app.is_on_workspace(activeWorkspace);
 };
 // Refresh dash
 WorkspaceIsolator.refresh = function() {
-	// Update applications shown in the dash
-	AppSystem.emit('installed-changed');
 	// Update icon state of all running applications
 	let running;
 	if (AppSystem._workspace_isolated_dash_nyuki_get_running) {
@@ -106,6 +102,8 @@ WorkspaceIsolator.refresh = function() {
 	running.forEach(function(app) {
 		app.notify('state');
 	});
+	// Update applications shown in the dash
+	AppSystem.emit('installed-changed');
 };
 
 let _wsIsolator;
