@@ -17,7 +17,7 @@ $(PROJECT).zip: compile
 install: compile
 	$(CP) $(PROJECT)/ "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
 
-compile: clean-backups $(SCHEMA_BIN)
+compile: clean-backups
 
 $(SCHEMA_BIN): $(SCHEMA_SRC)
 	$(SCHEMAC) $(SCHEMAS_PATH)

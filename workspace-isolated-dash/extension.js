@@ -1,14 +1,9 @@
 const Lang = imports.lang;
-const Mainloop = imports.mainloop;
 
 const Shell = imports.gi.Shell;
 
 const Main = imports.ui.main;
 const AppIcon = imports.ui.appDisplay.AppIcon;
-
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Prefs = Me.imports.prefs;
 
 const AppSystem = Shell.AppSystem.get_default();
 
@@ -20,7 +15,7 @@ const WorkspaceIsolator = new Lang.Class({
 		AppSystem._workspace_isolated_dash_nyuki_get_running = AppSystem.get_running;
 		AppSystem.get_running = function() {
 			let running = AppSystem._workspace_isolated_dash_nyuki_get_running();
-			if (Main.overview.visible || Prefs.settings.get_boolean('complete-app-isolation')) {
+			if (Main.overview.visible) {
 				return running.filter(WorkspaceIsolator.isActiveApp);
 			} else {
 				return running;
@@ -43,18 +38,12 @@ const WorkspaceIsolator = new Lang.Class({
 				this._dot.hide();
 			}
 		};
-		// Refresh whenever the overview is showing
-		this._onShowingId = Main.overview.connect('showing', function() {
-			WorkspaceIsolator.refresh();
-		});
 		// Refresh whenever there is a restack, including:
 		// - workspace change
 		// - move window to another workspace
 		// - window created
 		// - window closed
-		this._onRestackedId = global.screen.connect('restacked', function() {
-			WorkspaceIsolator.refresh();
-		});
+		this._onRestackedId = global.screen.connect('restacked', WorkspaceIsolator.refresh);
 	},
 
 	destroy: function() {
@@ -73,11 +62,6 @@ const WorkspaceIsolator = new Lang.Class({
 			AppIcon.prototype._updateRunningStyle = AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle;
 			delete AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle;
 		}
-		// Disconnect the showing signal
-		if (this._onShowingId) {
-			Main.overview.disconnect(this._onShowingId);
-			this._onShowingId = 0;
-		}
 		// Disconnect the restack signal
 		if (this._onRestackedId) {
 			global.screen.disconnect(this._onRestackedId);
@@ -87,8 +71,7 @@ const WorkspaceIsolator = new Lang.Class({
 });
 // Check if an application is on the active workspace
 WorkspaceIsolator.isActiveApp = function(app) {
-	let activeWorkspace = global.screen.get_active_workspace();
-	return app.is_on_workspace(activeWorkspace);
+	return app.is_on_workspace(global.screen.get_active_workspace());
 };
 // Refresh dash
 WorkspaceIsolator.refresh = function() {
@@ -103,7 +86,7 @@ WorkspaceIsolator.refresh = function() {
 		app.notify('state');
 	});
 	// Update applications shown in the dash
-	AppSystem.emit('installed-changed');
+	Main.overview._dash._queueRedisplay();
 };
 
 let _wsIsolator;
