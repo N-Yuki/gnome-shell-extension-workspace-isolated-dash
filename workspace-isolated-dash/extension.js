@@ -38,9 +38,10 @@ const WorkspaceIsolator = new Lang.Class({
 				this._dot.hide();
 			}
 		};
+		// Refresh when the workspace is switched
+		this._onSwitchWorkspaceId = global.window_manager.connect('switch-workspace', WorkspaceIsolator.refresh);
 		// Refresh whenever there is a restack, including:
-		// - workspace change
-		// - move window to another workspace
+		// - window moved to another workspace
 		// - window created
 		// - window closed
 		this._onRestackedId = global.screen.connect('restacked', WorkspaceIsolator.refresh);
@@ -62,10 +63,15 @@ const WorkspaceIsolator = new Lang.Class({
 			AppIcon.prototype._updateRunningStyle = AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle;
 			delete AppIcon.prototype._workspace_isolated_dash_nyuki__updateRunningStyle;
 		}
-		// Disconnect the restack signal
+		// Disconnect the restacked signal
 		if (this._onRestackedId) {
 			global.screen.disconnect(this._onRestackedId);
 			this._onRestackedId = 0;
+		}
+		// Disconnect the switch-workspace signal
+		if (this._onSwitchWorkspaceId) {
+			global.window_manager.disconnect(this._onSwitchWorkspaceId);
+			this._onSwitchWorkspaceId = 0;
 		}
 	}
 });
