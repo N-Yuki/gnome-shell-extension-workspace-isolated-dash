@@ -11,10 +11,13 @@ SCHEMAC = glib-compile-schemas
 ZIP = zip -ro
 CP = rsync -aP
 
+all: compile
+
 $(PROJECT).zip: compile
 	cd $(PROJECT) && $(ZIP) ../$@ .
 
 install: compile
+	mkdir -p "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
 	$(CP) $(PROJECT)/ "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
 
 compile: clean-backups
@@ -27,3 +30,8 @@ clean-backups:
 
 clean: clean-backups
 	rm -f $(PROJECT).zip $(SCHEMA_BIN)
+
+uninstall:
+	rm -rf "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
+
+.PHONY: all install compile clean-backups clean uninstall
