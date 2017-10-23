@@ -8,30 +8,36 @@ SCHEMA_BIN = $(SCHEMAS_PATH)/gschemas.compiled
 UUID = `grep -oP '(?<="uuid": ")[^"]*' $(PROJECT)/metadata.json`
 
 SCHEMAC = glib-compile-schemas
-ZIP = zip -ro
+ZIP = zip -FSro
 CP = rsync -aP
 
 all: compile
 
-$(PROJECT).zip: compile
-	cd $(PROJECT) && $(ZIP) ../$@ .
-
-install: compile
-	mkdir -p "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
-	$(CP) $(PROJECT)/ "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
-
-compile: clean-backups
-
 $(SCHEMA_BIN): $(SCHEMA_SRC)
 	$(SCHEMAC) $(SCHEMAS_PATH)
 
-clean-backups:
-	find . -type f -name '*~' -delete
+$(PROJECT).zip: clean-backups
+	cd $(PROJECT) && $(ZIP) ../$@ .
 
-clean: clean-backups
-	rm -f $(PROJECT).zip $(SCHEMA_BIN)
+compile: package
+
+schema: $(SCHEMA_BIN)
+
+package: $(PROJECT).zip
+
+install: clean-backups
+	mkdir -p "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
+	$(CP) $(PROJECT)/ "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
 
 uninstall:
 	rm -rf "$(HOME)/.local/share/gnome-shell/extensions/$(UUID)/"
 
-.PHONY: all install compile clean-backups clean uninstall
+clean: clean-backups clean-packages
+
+clean-backups:
+	find . -type f -name '*~' -delete
+
+clean-packages:
+	rm -f $(PROJECT).zip $(SCHEMA_BIN)
+
+.PHONY: all compile schema package install uninstall clean clean-backups clean-packages
