@@ -2,7 +2,7 @@
 	"uuid": "workspace-isolated-dash@n-yuki",
 	"name": "Workspace Isolated Dash",
 	"description": "Isolate workspaces, making the Overview look and behave as if the active workspace is the only workspace (except the workspace switcher).\nThis means it will only show an app icon in the dash if the application has a window on the active workspace (unless they are favourited), activating an application will try open a new window if there are no existing windows on the active workspace, and the overview will only display app icons as 'running' if the application has a window on the active workspace.",
-	"shell-version": [ "3.16", "3.18", "3.20", "3.22", "3.24", "3.26" ],
+	"shell-version": [ "3.16", "3.18", "3.20", "3.22", "3.24", "3.26", "3.28"],
 	"settings-schema": "org.gnome.shell.extensions.n-yuki.workspace-isolated-dash",
 	"url": "https://github.com/N-Yuki/gnome-shell-extension-workspace-isolated-dash"
 }
