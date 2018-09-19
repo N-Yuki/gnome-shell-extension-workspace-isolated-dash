@@ -44,7 +44,7 @@ const WorkspaceIsolator = new Lang.Class({
 		// - window moved to another workspace
 		// - window created
 		// - window closed
-		this._onRestackedId = global.screen.connect('restacked', WorkspaceIsolator.refresh);
+		this._onRestackedId = global.display.connect('restacked', WorkspaceIsolator.refresh);
 	},
 
 	destroy: function() {
@@ -65,7 +65,7 @@ const WorkspaceIsolator = new Lang.Class({
 		}
 		// Disconnect the restacked signal
 		if (this._onRestackedId) {
-			global.screen.disconnect(this._onRestackedId);
+			global.display.disconnect(this._onRestackedId);
 			this._onRestackedId = 0;
 		}
 		// Disconnect the switch-workspace signal
@@ -77,7 +77,7 @@ const WorkspaceIsolator = new Lang.Class({
 });
 // Check if an application is on the active workspace
 WorkspaceIsolator.isActiveApp = function(app) {
-	return app.is_on_workspace(global.screen.get_active_workspace());
+	return app.is_on_workspace(global.workspaceManager.get_active_workspace());
 };
 // Refresh dash
 WorkspaceIsolator.refresh = function() {
