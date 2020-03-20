@@ -92,7 +92,7 @@ WorkspaceIsolator.refresh = function() {
 		app.notify('state');
 	});
 	// Update applications shown in the dash
-	Main.overview._dash._queueRedisplay();
+	Main.overview._overview._controls.dash._queueRedisplay();
 };
 
 let _wsIsolator;
