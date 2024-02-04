@@ -4,3 +4,6 @@ This means it will only show an app icon in the dash if the application has a wi
 Original idea from: https://extensions.gnome.org/extension/876/isolated-workspaces/ and https://extensions.gnome.org/extension/440/workspace-separation-on-dash/
 
 The previous approaches reimplemented many parts, causing incompatibilities and large codebases. This implementation is significantly smaller and easier to maintain as it does not reimplement half the Dash to achieve the same features. It also fixes a number of bugs, as well as adding new features. For example, application icons are also updated.
+
+This extension is not actively maintained, so consider using https://extensions.gnome.org/extension/1583/worksets/ with the approach from my extension:
+https://github.com/N-Yuki/gnome-shell-extension-workspace-isolated-dash/issues/24#issuecomment-618318557
