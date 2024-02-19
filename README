@@ -7,3 +7,6 @@ The previous approaches reimplemented many parts, causing incompatibilities and 
 
 This extension is not actively maintained, so consider using https://extensions.gnome.org/extension/1583/worksets/ with the approach from my extension:
 https://github.com/N-Yuki/gnome-shell-extension-workspace-isolated-dash/issues/24#issuecomment-618318557
+
+A new fork of this extension for Gnome 45+:
+https://github.com/KSXGitHub/workspace-isolated-dash
